@@ -8,13 +8,13 @@ def verify_database():
     # Check total count
     cursor.execute("SELECT COUNT(*) FROM objects")
     total_count = cursor.fetchone()[0]
-    print(f"Total records in database: {total_count}")
+    print(f"Всего записей в базе данных: {total_count}")
     
     # Show sample records
     cursor.execute("SELECT id, name, audio, image, text FROM objects ORDER BY id LIMIT 5")
     records = cursor.fetchall()
     
-    print("\nSample records:")
+    print("\nПримеры записей:")
     print("-" * 80)
     for record in records:
         print(f"ID: {record[0]}")

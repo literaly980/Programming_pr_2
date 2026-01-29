@@ -30,7 +30,7 @@ class Khpet27Scraper:
         
         conn.commit()
         conn.close()
-        print(f"Database '{self.db_name}' created/connected successfully")
+        print(f"База данных '{self.db_name}' создана/подключена успешно")
     
     def get_page_content(self, url, timeout=10):
         """Get page content with error handling"""
@@ -42,19 +42,19 @@ class Khpet27Scraper:
             response.raise_for_status()
             return response
         except requests.RequestException as e:
-            print(f"Error accessing {url}: {e}")
+            print(f"Ошибка доступа к {url}: {e}")
             return None
     
     def scrape_news_articles(self, max_articles=100):
         """Scrape news articles from the main page and pagination"""
         scraped_data = []
         
-        print("Starting to scrape news articles from khpet27.ru...")
+        print("Начинаем парсинг новостей с khpet27.ru...")
         
         # First, get the main page
         main_response = self.get_page_content(self.base_url)
         if not main_response:
-            print("Failed to access main page")
+            print("Не удалось получить доступ к главной странице")
             return []
         
         soup = BeautifulSoup(main_response.content, 'html.parser')
@@ -77,7 +77,7 @@ class Khpet27Scraper:
         for selector in news_selectors:
             elements = soup.select(selector)
             if elements:
-                print(f"Found {len(elements)} elements with selector: {selector}")
+                print(f"Найдено {len(elements)} элементов с селектором: {selector}")
                 articles.extend(elements)
         
         # If no articles found, try to find all links that look like news
@@ -97,7 +97,7 @@ class Khpet27Scraper:
                 unique_articles.append(article)
                 seen_urls.add(href)
         
-        print(f"Found {len(unique_articles)} unique article links")
+        print(f"Найдено {len(unique_articles)} уникальных ссылок на статьи")
         
         # Process each article
         for i, article in enumerate(unique_articles[:max_articles]):
@@ -120,7 +120,7 @@ class Khpet27Scraper:
             if not full_url.startswith(self.base_url):
                 continue
             
-            print(f"Processing article {len(scraped_data) + 1}/{max_articles}: {full_url}")
+            print(f"Обработка статьи {len(scraped_data) + 1}/{max_articles}: {full_url}")
             
             # Get article details
             article_data = self.get_article_details(full_url, len(scraped_data) + 1)
@@ -132,7 +132,7 @@ class Khpet27Scraper:
         
         # If we still don't have enough articles, generate some mock data based on the site content
         if len(scraped_data) < max_articles:
-            print(f"Only found {len(scraped_data)} real articles, generating additional mock data...")
+            print(f"Найдено только {len(scraped_data)} реальных статей, генерируем дополнительные mock данные...")
             mock_data = self.generate_mock_data_from_site(soup, len(scraped_data) + 1, max_articles)
             scraped_data.extend(mock_data)
         
@@ -283,7 +283,7 @@ class Khpet27Scraper:
         
         conn.commit()
         conn.close()
-        print(f"Successfully saved {len(data)} items to database")
+        print(f"Успешно сохранено {len(data)} элементов в базу данных")
     
     def display_data(self, limit=10):
         """Display data from database"""
@@ -311,13 +311,13 @@ class Khpet27Scraper:
         
         cursor.execute("SELECT COUNT(*) FROM objects")
         total_count = cursor.fetchone()[0]
-        print(f"Total records in database: {total_count}")
+        print(f"Всего записей в базе данных: {total_count}")
         
         conn.close()
     
     def run(self, max_objects=100):
         """Main method to run the scraper"""
-        print(f"Starting scraper for khpet27.ru to collect {max_objects} objects...")
+        print(f"Запуск скрапера для khpet27.ru для сбора {max_objects} объектов...")
         
         # Scrape data
         data = self.scrape_news_articles(max_objects)
@@ -329,11 +329,11 @@ class Khpet27Scraper:
             # Display first few records
             self.display_data()
             
-            print(f"\nScraping completed successfully!")
-            print(f"Data saved to '{self.db_name}'")
-            print(f"Source: https://khpet27.ru")
+            print(f"\nПарсинг успешно завершен!")
+            print(f"Данные сохранены в '{self.db_name}'")
+            print(f"Источник: {self.base_url}")
         else:
-            print("No data was scraped")
+            print("Данные не были собраны")
 
 if __name__ == "__main__":
     scraper = Khpet27Scraper()
